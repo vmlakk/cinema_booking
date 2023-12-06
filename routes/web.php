@@ -51,7 +51,7 @@ Route::get('/cinema', function () {
 
 Route::get('/account', function () {
     $currentTime = now('GMT+3');
-    $userSeats = Seat::all()->where('user_id', Auth::user()->id);
+    $userSeats = Seat::all()->where('user_id', Auth::user()->id)->sortBy('movie.showtime');
 
     return view('account', [
         'active_seats' => $userSeats
@@ -103,7 +103,8 @@ Route::post('/movies/{movie}', function(Request $request, Movie $movie) {
     ]);
     if ($movie->showtime > now('GMT+3')){
         if (Auth::user()->seats->where('movie_id', $movie->id)->count() === 0){
-            if (Seat::all()->where('seat', $data['seat'])->where('row', $data['row'])->count() === 0){
+            if (Seat::all()->where('movie_id', $data['movie_id'])
+            ->where('seat', $data['seat'])->where('row', $data['row'])->count() === 0){
                 $seat = new Seat($data);
                 $seat->save();
                 return redirect()->route('movies.show', ['movie' => $movie]);

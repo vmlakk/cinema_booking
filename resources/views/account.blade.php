@@ -7,6 +7,7 @@
     <h3 class="mb-4">Активные бронирования</h3>  
     @forelse ($active_seats as $seat) 
         <div class="card">
+            <img src="{{ asset('storage/posters/' . $seat->movie->poster) }}" alt="Постер фильма" class="object-fill h-80 w-50">
             <h4>{{ $seat->movie->title }}</h4>
             <div class="flex gap-3">
                 <p>{{ $seat->movie->showtime }}</p>
