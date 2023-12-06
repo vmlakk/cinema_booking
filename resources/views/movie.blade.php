@@ -3,7 +3,6 @@
 @section('title', $movie->title)
 
 @section('content')
-
 <div class="flex gap-4 mb-4">
     <img src="{{ asset('storage/posters/' . $movie->poster) }}" alt="Постер фильма" class="object-cover h-50 w-80">
     <p class="mb-8">{{ $movie->description }}</p>
@@ -33,9 +32,9 @@
                         △
                         @else
                         ▲
+                    @endif
                     </button>
                     </form></td>
-                @endif
             @endfor
             </tr>
     @endfor
