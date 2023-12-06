@@ -22,17 +22,19 @@
             @php
                 $is_taken = $movie->seats->where('row', $i)->where('seat', $j)->count();
             @endphp
-                @if ($is_taken === 0)
-                    <td><form method="POST" action={{ route('seats.store', ['movie' => $movie]) }}>
-                        @csrf
-                        <input type="hidden" name="row" id="row" value="{{ $i }}">
-                        <input type="hidden" name="seat" id="seat" value="{{ $j }}">
-                        <input type="hidden" name="movie_id" id="movie_id" value="{{ $movie->id }}">
-                        <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}">
-                        <button type="submit">△</button>
+                <td><form method="POST" action={{ route('seats.store', ['movie' => $movie]) }}>
+                    @csrf
+                    <input type="hidden" name="row" id="row" value="{{ $i }}">
+                    <input type="hidden" name="seat" id="seat" value="{{ $j }}">
+                    <input type="hidden" name="movie_id" id="movie_id" value="{{ $movie->id }}">
+                    <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}">
+                    <button type="submit">
+                        @if ($is_taken === 0)
+                        △
+                        @else
+                        ▲
+                    </button>
                     </form></td>
-                @else
-                   <td>▲</td> 
                 @endif
             @endfor
             </tr>

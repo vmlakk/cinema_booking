@@ -38,15 +38,27 @@ Route::get('/register', function () {
 })->name('users.register')->middleware('guest');
 
 Route::get('/movies/{movie}', function(Movie $movie) {
+    if ($movie->showtime < now('GMT+3') && !Auth::user()->is_admin){
+        return redirect()->route('movies.index');
+    }
     return view('movie', ['movie' => $movie]);
 })->name('movies.show')->middleware('auth');
+
 
 Route::get('/cinema', function () {
     return view('cinema');
 })->name('cinema.show')->middleware('auth');
 
 Route::get('/account', function () {
-    return view('account', ['seats' => Seat::all()]);
+    $currentTime = now('GMT+3');
+    $userSeats = Seat::all()->where('user_id', Auth::user()->id);
+
+    return view('account', [
+        'active_seats' => $userSeats
+        ->where('movie.showtime', '>', $currentTime),
+        'passed_seats' => $userSeats
+        ->where('movie.showtime', '<', $currentTime)
+    ]);
 })->name('users.account')->middleware('auth');
 
 Route::get('/admin', function () {
@@ -89,12 +101,17 @@ Route::post('/movies/{movie}', function(Request $request, Movie $movie) {
         'movie_id' => 'required',
         'user_id' => 'required'
     ]);
-    if (Auth::user()->seats->where('movie_id', $movie->id)->count() === 0){
-        $seat = new Seat($data);
-        $seat->save();
-        return redirect()->route('movies.show', ['movie' => $movie]);
-    }
-    return redirect()->back()->withErrors(['movie_id' => 'Вы уже забронировали билет на этот фильм. ']);
+    if ($movie->showtime > now('GMT+3')){
+        if (Auth::user()->seats->where('movie_id', $movie->id)->count() === 0){
+            if (Seat::all()->where('seat', $data['seat'])->where('row', $data['row'])->count() === 0){
+                $seat = new Seat($data);
+                $seat->save();
+                return redirect()->route('movies.show', ['movie' => $movie]);
+            }
+            return redirect()->back()->withErrors(['seat' => 'Данное место уже занято.']);
+        }
+        return redirect()->back()->withErrors(['movie_id' => 'Вы уже забронировали билет на этот фильм.']);
+    } return redirect()->back()->withErrors(['showtime' => 'Билеты на этот фильм болше недоступны для бронирования.']);
 })->name('seats.store');
 
 Route::post('/register', function(Request $request) {
@@ -140,3 +157,9 @@ Route::delete('/admin/{movie}', function(Movie $movie){
 
     return redirect()->route('admin.account');
 })->name('movies.delete');
+
+Route::delete('/account/{seat}', function(Seat $seat){
+    $seat->delete();
+
+    return redirect()->route('users.account');
+})->name('seats.delete');

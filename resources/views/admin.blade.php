@@ -17,7 +17,9 @@
         @forelse ($movies as $movie)  
         <tr>
             <th class="font-normal">{{ $movie->id }}</th>
-            <th class="font-normal">{{ $movie->title }}</th>
+            <th>
+                <a href="{{ route('movies.show', ['movie' => $movie]) }}" class="font-normal">{{ $movie->title }}</a>
+            </th>
             <th>
                 <form method="POST" action="{{ route('movies.delete', ['movie' => $movie]) }}">
                     @csrf
