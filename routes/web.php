@@ -97,17 +97,25 @@ Route::post('/admin/create', function(Request $request){
     return redirect()->route('movies.index');
 })->name('movies.store');
 
-Route::put('/admin/edit/{movie}', function (Request $request, Movie $movie){
-        $movie->update($request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
-            'poster' => 'required|image|mimes:jpeg,png,jpg|max:8192',
-            'rating' => 'required|integer|between:0,5',
-            'duration' => 'required|integer|min:1',
-            'showtime' => 'required|date|after:now',
-        ]));
+Route::put('/admin/edit/{movie}', function (Request $request, Movie $movie){ 
+    $data = $request->validate([
+        'title' => 'required|max:255',
+        'description' => 'required',
+        'poster' => 'required|image|mimes:jpeg,png,jpg|max:8192',
+        'rating' => 'required|integer|between:0,5',
+        'duration' => 'required|integer|min:1',
+        'showtime' => 'required|date|after:now',
+    ]);
 
-        return redirect()->route('admin.account');
+    if ($request->hasFile('poster')) {
+        $imagePath = $request->file('poster')->store('public/posters');
+        $data['poster'] = basename($imagePath);
+    } else {
+        return redirect()->back()->withErrors(['poster' => 'Необходимо загрузить постер фильма.']);
+    }
+
+    $movie->update($data);
+    return redirect()->route('admin.account');
     })->name('movies.update');
 
 Route::post('/movies/{movie}', function(Request $request, Movie $movie) {

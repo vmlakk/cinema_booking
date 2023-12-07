@@ -13,7 +13,7 @@
     <label>Описание</label>
     <textarea name="description" id="description" rows="5" class="mb-4">{{ $movie->description ?? ""}}</textarea>
     <label>Постер</label>
-    <input type="file" name="poster" id="poster" class="mb-4" value="{{ $movie->poster ?? ""}}">
+    <input type="file" name="poster" id="poster" class="mb-4">
     <label>Рейтинг</label>
     <input type="number" name="rating" id="rating" class="mb-4" value="{{ $movie->rating ?? ""}}">
     <label>Длительность</label>
