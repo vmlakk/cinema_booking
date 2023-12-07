@@ -98,7 +98,14 @@ Route::post('/admin/create', function(Request $request){
 })->name('movies.store');
 
 Route::put('/admin/edit/{movie}', function (Request $request, Movie $movie){
-        $movie->update($request->validated());
+        $movie->update($request->validate([
+            'title' => 'required|max:255',
+            'description' => 'required',
+            'poster' => 'required|image|mimes:jpeg,png,jpg|max:8192',
+            'rating' => 'required|integer|between:0,5',
+            'duration' => 'required|integer|min:1',
+            'showtime' => 'required|date|after:now',
+        ]));
 
         return redirect()->route('admin.account');
     })->name('movies.update');
