@@ -71,6 +71,10 @@ Route::get('/admin/create', function () {
     return view('admin_create');
 })->name('movies.create')->middleware('auth')->middleware('admin');
 
+Route::get('/admin/edit/{movie}', function (Movie $movie) {
+    return view('admin_edit', ['movie' => $movie]);
+})->name('movies.edit')->middleware('auth')->middleware('admin');
+
 Route::post('/admin/create', function(Request $request){
     $data = $request->validate([
         'title' => 'required|max:255',
@@ -91,8 +95,13 @@ Route::post('/admin/create', function(Request $request){
     $movie = new Movie($data);
     $movie->save();
     return redirect()->route('movies.index');
-
 })->name('movies.store');
+
+Route::put('/admin/edit/{movie}', function (Request $request, Movie $movie){
+        $movie->update($request->validated());
+
+        return redirect()->route('admin.account');
+    })->name('movies.update');
 
 Route::post('/movies/{movie}', function(Request $request, Movie $movie) {
     $data = $request->validate([

@@ -9,7 +9,8 @@
         <tr>
             <th class="font-semibold">ID</th>
             <th class="font-semibold">Название</th>
-            <th class="font-semibold">Удалить</th>
+            <th class="font-semibold">Редактирование</th>
+            <th class="font-semibold">Удаление</th>
             <th class="font-semibold">Статус</th>
         </tr>
     </thead>
@@ -19,6 +20,9 @@
             <th class="font-normal">{{ $movie->id }}</th>
             <th>
                 <a href="{{ route('movies.show', ['movie' => $movie]) }}" class="font-normal">{{ $movie->title }}</a>
+            </th>
+            <th>
+                <a href="{{ route('movies.edit', ['movie' => $movie]) }}" class="btn font-normal">Редактировать</a>
             </th>
             <th>
                 <form method="POST" action="{{ route('movies.delete', ['movie' => $movie]) }}">
