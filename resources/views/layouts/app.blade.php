@@ -3,6 +3,7 @@
 <head>
     <title>Cinema Booking</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
 
     {{-- blade-formatter-disable --}}
     <style type="text/tailwindcss">
@@ -43,7 +44,7 @@
         }
     </style>
     {{-- blade-formatter-enable --}}
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="bg-pink-100/50">
     @if (Auth::check())

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
 
 /*
 |--------------------------------------------------------------------------
@@ -140,11 +141,18 @@ Route::post('/movies/{movie}', function(Request $request, Movie $movie) {
 })->name('seats.store');
 
 Route::post('/register', function(Request $request) {
-    $data = $request->validate([
+    $validator = Validator::make($request->all(), [
         'login' => 'required|max:255|unique:users',
         'password' => 'required|min:5',
-        'confirm_password' => 'required|same:password'
+        'confirm_password' => 'required|same:password',
     ]);
+
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()]);
+    }
+
+    $data = $validator->validated();
+
     $user = new User($data);
     $user->save();
     Auth::login($user);
