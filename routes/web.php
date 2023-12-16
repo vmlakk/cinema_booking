@@ -148,7 +148,7 @@ Route::post('/register', function(Request $request) {
     ]);
 
     if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()]);
+        return response()->json(['errors' => $validator->errors()], 422);
     }
 
     $data = $validator->validated();
@@ -156,7 +156,7 @@ Route::post('/register', function(Request $request) {
     $user = new User($data);
     $user->save();
     Auth::login($user);
-    return redirect()->route('movies.index');
+    return response()->json(['redirect' => route('movies.index')]);
 })->name('users.store');
 
 Route::post('/login', function(Request $request) {
