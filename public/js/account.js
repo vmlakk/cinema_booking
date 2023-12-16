@@ -80,9 +80,6 @@ $(document).ready(function () {
                     fetchSeats();
                 }
             },
-            error: function (error) {
-                console.error('Ошибка:', error);
-            }
         });
     });
 
