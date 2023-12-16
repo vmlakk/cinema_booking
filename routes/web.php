@@ -160,20 +160,26 @@ Route::post('/register', function(Request $request) {
 })->name('users.store');
 
 Route::post('/login', function(Request $request) {
-    $data = $request->validate([
+    $validator = Validator::make($request->all(), [
         'login' => 'required',
         'password' => 'required',
     ]);
 
-    if (Auth::attempt(['login' => $request->login, 'password' => $request->password])) {
+    if ($validator->fails()) {
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
+    $data = $validator->validated();
+
+    if (Auth::attempt(['login' => $data["login"], 'password' => $data["password"]])) {
         $request->session()->regenerate();
-        return redirect()->route('movies.index');
+        return response()->json(['redirect' => route('movies.index')]);
     } 
 
-    return back()->withErrors([
-        'login' => 'Неправильный логин или пароль.',
-        'password' => 'Неправильный пароль или пароль.',
-    ]);
+    return response()->json(['errors' => [
+        'login' => ['Неправильный логин или пароль.'],
+        'password' => ['Неправильный пароль или пароль.'],
+    ]], 422);
 })->name('users.login');
 
 Route::post('/account', function(Request $request) {
