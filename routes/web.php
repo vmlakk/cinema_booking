@@ -24,11 +24,21 @@ Route::get('/', function() {
 });
 
 Route::get('/movies', function () {
-    $currentTime = now('GMT+3');
     return view('index', [
-        'movies' => Movie::where('showtime', '>', $currentTime)->orderBy('showtime', 'asc')->paginate()
+        'movies' => getActiveMovies()
     ]);
 })->name('movies.index')->middleware('auth');
+
+Route::get('/api/movies', function() {
+    return response()->json([
+        'movies' => getActiveMovies()
+    ]);
+});
+
+function getActiveMovies() {
+    $currentTime = now('GMT+3');
+    return Movie::all()->where('showtime', '>', $currentTime)->sortBy('showtime');
+}
 
 Route::get('/login', function () {
     return view('login');
