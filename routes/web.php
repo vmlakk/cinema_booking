@@ -80,6 +80,19 @@ Route::get('/account', function () {
     ]);
 })->name('users.account')->middleware('auth');
 
+Route::get('/api/account/seats', function() {
+    $currentTime = now('GMT+3');
+    $userSeats = Seat::with('movie')
+                     ->where('user_id', Auth::user()->id)
+                     ->get()
+                     ->sortBy('movie.showtime');
+
+    $activeSeats = $userSeats->where('movie.showtime', '>', $currentTime)->load("movie");
+    $passedSeats = $userSeats->where('movie.showtime', '<', $currentTime)->load("movie");
+
+    return response()->json(['active_seats' => $activeSeats, 'passed_seats' => $passedSeats]);
+})->name('api.account.seats')->middleware('auth');
+
 Route::get('/admin', function () {
     return view('admin', [
         'movies' => Movie::all()
@@ -225,3 +238,9 @@ Route::delete('/account/{seat}', function(Seat $seat){
 
     return redirect()->route('users.account');
 })->name('seats.delete');
+
+Route::delete('/api/account/seats/{seat}', function(Seat $seat) {
+    $seat->delete();
+
+    return response()->json(['success' => 'Бронирование успешно удалено']);
+})->middleware('auth');
