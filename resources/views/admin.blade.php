@@ -3,7 +3,7 @@
 @section('title', 'Админ панель')
 
 @section('content')
-
+<div id="admin-data" data-fetch-url="{{ url('/api/movies') }}">
 <table>
     <thead>
         <tr>
@@ -31,11 +31,16 @@
                     <button type="submit" class="btn font-normal">Удалить</button>
                 </form>
             </th>
-            @if ($movie->showtime > now('GMT+3'))
-                <th class="text-green-700 font-semibold">✓</th>
-            @else
-                <th class="text-red-800 font-semibold">✗</th>
-            @endif
+            <th id="movie-status-{{ $movie->id }}">
+                @php
+                    $isActive = $movie->showtime > now('GMT+3');
+                    if($isActive){
+                        echo '<span class="text-green-700 font-semibold">✓</span>';
+                    } else {
+                        echo '<span class="text-red-800 font-semibold">✗</span>';
+                    }
+                @endphp
+            </th>
         </tr>
         @empty
         <tr></tr>
@@ -46,5 +51,6 @@
 <div class="btn mx-auto">
 <a href="{{ route('movies.create') }}">Добавить фильм</a>
 </div>
-
+</div>
+<script src="{{ asset('js/admin.js') }}" defer></script>
 @endsection

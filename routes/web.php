@@ -99,6 +99,12 @@ Route::get('/admin', function () {
     ]);
 })->name('admin.account')->middleware('auth')->middleware('admin');
 
+Route::get('/api/admin', function () {
+    $movies = Movie::all();
+
+    return response()->json(['movies' => $movies]);
+})->middleware('auth')->middleware('admin');
+
 Route::get('/admin/create', function () {
     return view('admin_create');
 })->name('movies.create')->middleware('auth')->middleware('admin');
@@ -133,7 +139,7 @@ Route::put('/admin/edit/{movie}', function (Request $request, Movie $movie){
     $data = $request->validate([
         'title' => 'required|max:255',
         'description' => 'required',
-        'poster' => 'required|image|mimes:jpeg,png,jpg|max:8192',
+        'poster' => 'image|mimes:jpeg,png,jpg|max:8192',
         'rating' => 'required|integer|between:0,5',
         'duration' => 'required|integer|min:1',
         'showtime' => 'required|date|after:now',
@@ -142,8 +148,6 @@ Route::put('/admin/edit/{movie}', function (Request $request, Movie $movie){
     if ($request->hasFile('poster')) {
         $imagePath = $request->file('poster')->store('public/posters');
         $data['poster'] = basename($imagePath);
-    } else {
-        return redirect()->back()->withErrors(['poster' => 'Необходимо загрузить постер фильма.']);
     }
 
     $movie->update($data);
