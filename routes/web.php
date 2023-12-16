@@ -33,7 +33,7 @@ Route::get('/api/movies', function() {
     return response()->json([
         'movies' => getActiveMovies()
     ]);
-});
+})->middleware('auth');
 
 function getActiveMovies() {
     $currentTime = now('GMT+3');
@@ -55,6 +55,14 @@ Route::get('/movies/{movie}', function(Movie $movie) {
     return view('movie', ['movie' => $movie]);
 })->name('movies.show')->middleware('auth');
 
+Route::get('/api/movies/{movie}', function(Movie $movie) {
+    if ($movie->showtime < now('GMT+3') && !Auth::user()->is_admin) {
+        return response()->json(['error' => 'Фильм не активен'], 403);
+    }
+
+    $movie->load('seats');
+    return response()->json($movie);
+})->name('api.movies.show')->middleware('auth');
 
 Route::get('/cinema', function () {
     return view('cinema');
@@ -136,18 +144,23 @@ Route::post('/movies/{movie}', function(Request $request, Movie $movie) {
         'movie_id' => 'required',
         'user_id' => 'required'
     ]);
+
     if ($movie->showtime > now('GMT+3')){
         if (Auth::user()->seats->where('movie_id', $movie->id)->count() === 0){
-            if (Seat::all()->where('movie_id', $data['movie_id'])
-            ->where('seat', $data['seat'])->where('row', $data['row'])->count() === 0){
+            if (Seat::all()
+                ->where('movie_id', $data['movie_id'])
+                ->where('seat', $data['seat'])
+                ->where('row', $data['row'])
+                ->count() === 0) {
                 $seat = new Seat($data);
                 $seat->save();
-                return redirect()->route('movies.show', ['movie' => $movie]);
+                return response()->json(['success' => 'Место успешно забронировано']);
             }
-            return redirect()->back()->withErrors(['seat' => 'Данное место уже занято.']);
+            return response()->json(['error' => 'Данное место уже занято'], 422);
         }
-        return redirect()->back()->withErrors(['movie_id' => 'Вы уже забронировали билет на этот фильм.']);
-    } return redirect()->back()->withErrors(['showtime' => 'Билеты на этот фильм больше недоступны для бронирования.']);
+        return response()->json(['error' => 'Вы уже забронировали билет на этот фильм'], 422);
+    } 
+    return response()->json(['error' => 'Билеты на этот фильм больше недоступны для бронирования'], 422);
 })->name('seats.store');
 
 Route::post('/register', function(Request $request) {

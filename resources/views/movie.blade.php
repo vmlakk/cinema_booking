@@ -3,6 +3,7 @@
 @section('title', $movie->title)
 
 @section('content')
+<div id="movie-data" data-movie-url="{{ route('api.movies.show', ['movie' => $movie]) }}">
 <div class="flex gap-6 mb-4">
     <img src="{{ asset('storage/posters/' . $movie->poster) }}" alt="Постер фильма" class="object-cover h-50 w-80">
 
@@ -17,19 +18,6 @@
     </div>
 </div>
 
-
-@error('seat')
-    <p class="error">{{ $message }}</p>
-@enderror
-
-@error('movie_id')
-    <p class="error">{{ $message }}</p>
-@enderror
-
-@error('showtime')
-    <p class="error">{{ $message }}</p>
-@enderror
-
 <div class="text-lg text-center">
     <h3 class="mb-4">Бронирование мест:</h3>
     <table>
@@ -38,20 +26,17 @@
             <tr>
             @for ($j = 1; $j <= $movie->max_seats; $j++)
             @php
+                $seatId = "seat-" . $i . "-" . $j;
                 $is_taken = $movie->seats->where('row', $i)->where('seat', $j)->count();
             @endphp
-                <td><form method="POST" action={{ route('seats.store', ['movie' => $movie]) }}>
+                <td><form class="seatBookingForm" method="POST" action={{ route('seats.store', ['movie' => $movie]) }}>
                     @csrf
                     <input type="hidden" name="row" id="row" value="{{ $i }}">
                     <input type="hidden" name="seat" id="seat" value="{{ $j }}">
                     <input type="hidden" name="movie_id" id="movie_id" value="{{ $movie->id }}">
                     <input type="hidden" name="user_id" id="user_id" value="{{ Auth::user()->id }}">
-                    <button type="submit">
-                        @if ($is_taken === 0)
-                        △
-                        @else
-                        ▲
-                    @endif
+                    <button type="submit" id="{{ $seatId }}" class="{{ $is_taken ? 'taken' : 'available' }}">
+                        {{ $is_taken ? '▲' : '△' }}
                     </button>
                     </form></td>
             @endfor
@@ -60,5 +45,6 @@
     </tbody>
     </table>
 </div>
-    
+</div>
+<script src="{{ asset('js/movie.js') }}" defer></script>
 @endsection
