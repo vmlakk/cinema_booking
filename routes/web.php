@@ -136,7 +136,7 @@ Route::post('/movies/{movie}', function(Request $request, Movie $movie) {
             return redirect()->back()->withErrors(['seat' => 'Данное место уже занято.']);
         }
         return redirect()->back()->withErrors(['movie_id' => 'Вы уже забронировали билет на этот фильм.']);
-    } return redirect()->back()->withErrors(['showtime' => 'Билеты на этот фильм болше недоступны для бронирования.']);
+    } return redirect()->back()->withErrors(['showtime' => 'Билеты на этот фильм больше недоступны для бронирования.']);
 })->name('seats.store');
 
 Route::post('/register', function(Request $request) {
@@ -164,7 +164,7 @@ Route::post('/login', function(Request $request) {
 
     return back()->withErrors([
         'login' => 'Неправильный логин или пароль.',
-        'password' => 'Неправильный логин или пароль.',
+        'password' => 'Неправильный пароль или пароль.',
     ]);
 })->name('users.login');
 

@@ -3,13 +3,32 @@
 @section('title', $movie->title)
 
 @section('content')
-<div class="flex gap-4 mb-4">
+<div class="flex gap-6 mb-4">
     <img src="{{ asset('storage/posters/' . $movie->poster) }}" alt="Постер фильма" class="object-cover h-50 w-80">
-    <p class="mb-8">{{ $movie->description }}</p>
-    <x-star-rating :rating="$movie->rating" />
-    <p>{{ $movie->duration }}</p>
-    <p>{{ $movie->showtime }}</p>
+
+    <div class="flex flex-col">
+        <p class="mb-8">{{ $movie->description }}</p>
+        
+        <div class="flex gap-4">
+            <x-star-rating :rating="$movie->rating" />
+            <p>Длительность: {{ $movie->duration }} мин.</p>
+            <p>Время показа: {{ $movie->showtime }}</p>
+        </div>
+    </div>
 </div>
+
+
+@error('seat')
+    <p class="error">{{ $message }}</p>
+@enderror
+
+@error('movie_id')
+    <p class="error">{{ $message }}</p>
+@enderror
+
+@error('showtime')
+    <p class="error">{{ $message }}</p>
+@enderror
 
 <div class="text-lg text-center">
     <h3 class="mb-4">Бронирование мест:</h3>
