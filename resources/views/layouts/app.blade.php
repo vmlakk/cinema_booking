@@ -8,19 +8,19 @@
     {{-- blade-formatter-disable --}}
     <style type="text/tailwindcss">
         .btn {
-            @apply rounded-md px-2 py-1 text-center  text-slate-700 shadow-sm ring-1 ring-slate-700/20 hover:bg-pink-100/50
+            @apply rounded-md px-2 py-1 text-center  text-slate-800 shadow-sm ring-1 ring-slate-700/20 hover:bg-pink-100/50
         }
 
         .list {
-            @apply flex flex-wrap -mx-1
+            @apply flex flex-wrap -mx-1 gap-1
         }
 
         .card {
-            @apply mb-4 my-1 px-1 w-full md:w-1/4 rounded-lg border container mx-auto
+            @apply mb-4 my-1 px-1 py-3 w-full md:w-1/4 container mx-auto rounded-lg bg-pink-300/25 ring-1 ring-pink-500/20 hover:bg-pink-100/50
         }
 
         .error {
-            @apply mb-4
+            @apply mb-4 mt-4 bg-white/75 rounded-2xl text-center text-pink-700
         }
 
         .form-container {
@@ -32,11 +32,11 @@
         }
 
         label {
-            @apply block text-slate-700 mb-2
+            @apply block text-slate-900 mb-2
         }
 
         input, textarea {
-            @apply shadow-sm appearance-none border w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none
+            @apply shadow-sm rounded-xl appearance-none border w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none
         }
 
         form {
@@ -46,7 +46,7 @@
     {{-- blade-formatter-enable --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
-<body class="bg-pink-100/50">
+<body class="bg-pink-200/50">
     @if (Auth::check())
     <header class="mt-2 mb-6 flex">
         <a href="{{ route('movies.index') }}" class="text-center grow">Главная</a>

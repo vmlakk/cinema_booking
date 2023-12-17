@@ -4,7 +4,7 @@
 
 @section('content')
 <div id="admin-data" data-fetch-url="{{ url('/api/movies') }}">
-<table>
+<table class="rounded-3xl bg-pink-500/25 border-2 border-pink-700/30">
     <thead>
         <tr>
             <th class="font-semibold">ID</th>
@@ -19,16 +19,16 @@
         <tr>
             <th class="font-normal">{{ $movie->id }}</th>
             <th>
-                <a href="{{ route('movies.show', ['movie' => $movie]) }}" class="font-normal">{{ $movie->title }}</a>
+                <a href="{{ route('movies.show', ['movie' => $movie]) }}" class="font-normal hover:text-pink-700">{{ $movie->title }}</a>
             </th>
             <th>
-                <a href="{{ route('movies.edit', ['movie' => $movie]) }}" class="btn font-normal">Редактировать</a>
+                <a href="{{ route('movies.edit', ['movie' => $movie]) }}" class="btn font-normal bg-pink-300/75">Редактировать</a>
             </th>
             <th>
                 <form method="POST" action="{{ route('movies.delete', ['movie' => $movie]) }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn font-normal">Удалить</button>
+                    <button type="submit" class="btn font-normal bg-pink-400/50">Удалить</button>
                 </form>
             </th>
             <th id="movie-status-{{ $movie->id }}">
@@ -48,7 +48,7 @@
     </tbody>
 </table>
 
-<div class="btn mx-auto">
+<div class="btn mx-auto mb-5 bg-pink-500/25">
 <a href="{{ route('movies.create') }}">Добавить фильм</a>
 </div>
 </div>

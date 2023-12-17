@@ -42,22 +42,26 @@ $(document).ready(function () {
         var deleteForm = '';
         if (isActive) {
             deleteForm = `
-                <form method="POST" class="flex justify-start p-0 m-0 delete-seat-form" data-seat-id="${seat.id}">
+                <form method="POST" class="px-2 p-0 m-0 delete-seat-form" data-seat-id="${seat.id}">
                     <input type="hidden" name="_token" value="${csrfToken}">
                     <input type="hidden" name="_method" value="DELETE">
-                    <button type="submit" class="btn mt-3">Удалить</button>
+                    <button type="submit" class="btn bg-pink-400/25 mt-3">Удалить</button>
                 </form>
             `;
         }
 
         return `
             <div class="card">
-                <img src="${posterBaseUrl}/${seat.movie.poster}" alt="Постер фильма" class="object-fill h-80 w-50">
-                <h4>${seat.movie.title}</h4>
-                <div class="flex gap-3">
+                <div class="flex justify-center">
+                    <img src="${posterBaseUrl}/${seat.movie.poster}" alt="Постер фильма" class="object-fill h-80 w-50 rounded-lg">
+                </div>
+                <div class="flex justify-center">
+                    <h4>${seat.movie.title}</h4>
+                </div>
+                <div class="flex gap-3 justify-center">
                     <p>${seat.movie.showtime}</p>
                 </div>
-                <div class="flex gap-1">
+                <div class="flex gap-1 justify-center">
                     <p>Место: ${seat.seat} Ряд: ${seat.row}</p>
                 </div>
                 ${deleteForm}

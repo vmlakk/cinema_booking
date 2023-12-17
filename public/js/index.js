@@ -17,9 +17,13 @@ $(document).ready(function() {
                 movies.forEach(function(movie) {
                     moviesList += `
                         <div class="card">
-                            <img src="${posterBaseUrl}/${movie.poster}" alt="Постер фильма" class="object-fill h-80 w-46">
-                            <a href="${movieBaseUrl}/${movie.id}">${movie.title}</a>
-                            <div class="flex gap-3">
+                            <div class="flex justify-center">
+                                <img src="${posterBaseUrl}/${movie.poster}" alt="Постер фильма" class="object-fill h-80 w-46 rounded-lg">
+                            </div>
+                            <div class="flex justify-center">
+                                <a href="${movieBaseUrl}/${movie.id}" class="hover:text-pink-700/75">${movie.title}</a>
+                            </div>
+                                <div class="flex gap-3 justify-center">
                                 <p>${movie.showtime}</p>
                                 ${generateRating(movie.rating)}
                             </div>
@@ -36,7 +40,7 @@ $(document).ready(function() {
         });
     }
 
-    setInterval(fetchMovies, 5000);
+   setInterval(fetchMovies, 5000);
 });
 
 function generateRating(rating) {
