@@ -1,0 +1,538 @@
+openapi: 3.0.0
+info:
+  title: Cinema Booking API
+  description: API for managing movie showings and seat bookings.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /movies:
+    get:
+      summary: List all active movies
+      description: Retrieves a list of all active movies.
+      tags:
+        - movies
+      responses:
+        "200":
+          description: A list of active movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Movie"
+
+  /api/movies:
+    get:
+      summary: Get active movies (API)
+      description: Retrieves a list of active movies for API use.
+      tags:
+        - movies.api
+      responses:
+        "200":
+          description: A list of active movies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  movies:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Movie"
+
+  /movies/{movieId}:
+    get:
+      summary: Get a specific movie
+      description: Retrieves details of a specific movie by ID.
+      tags:
+        - movies
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details of a specific movie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+        "403":
+          description: Forbidden access if the movie is not active or user is not admin
+    post:
+      summary: Book a seat for a movie
+      description: Book a seat for a specific movie.
+      tags:
+        - movies
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeatRequest"
+      responses:
+        "200":
+          description: Seat successfully booked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+        "422":
+          description: Seat already booked or other booking error
+
+  /api/movies/{movieId}:
+    get:
+      summary: Get a specific movie (API)
+      description: Retrieves details of a specific movie by ID for API use.
+      tags:
+        - movies.api
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Details of a specific movie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Movie"
+        "403":
+          description: Forbidden access if the movie is not active or user is not admin
+
+  /login:
+    get:
+      tags:
+        - login
+      summary: Login page
+      description: Shows the login page for guest users.
+      responses:
+        "200":
+          description: The login page view
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags:
+        - login
+      summary: User login
+      description: Login an existing user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        "200":
+          description: User successfully logged in and redirected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect:
+                    type: string
+        "422":
+          description: Validation errors or incorrect credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrors"
+
+  /register:
+    get:
+      tags:
+        - register
+      summary: Registration page
+      description: Shows the registration page for guest users.
+      responses:
+        "200":
+          description: The registration page view
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags:
+        - register
+      summary: User registration
+      description: Register a new user.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegistration"
+      responses:
+        "200":
+          description: User successfully registered and redirected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  redirect:
+                    type: string
+        "422":
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ValidationErrors"
+
+  /account:
+    get:
+      tags:
+        - account
+      summary: User account page
+      description: Shows the user account page with active and past seat bookings.
+      responses:
+        "200":
+          description: The user account page view
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags:
+        - account
+      summary: User logout
+      description: Logs out the current user.
+      responses:
+        "302":
+          description: Redirect to the login page
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+
+  /account/{seatId}:
+    delete:
+      tags:
+        - account
+      summary: Delete a seat booking
+      description: Deletes a specific seat booking.
+      parameters:
+        - in: path
+          name: seatId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "302":
+          description: Redirect to the account page
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+
+  /api/account/seats:
+    get:
+      tags:
+        - account.api
+      summary: Get user's seats (API)
+      description: Retrieves the seats booked by the logged-in user through API.
+      responses:
+        "200":
+          description: A list of booked seats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_seats:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Seat"
+                  passed_seats:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Seat"
+
+  /api/account/seats/{seatId}:
+    delete:
+      tags:
+        - account.api
+      summary: Delete a seat booking (API)
+      description: Deletes a specific seat booking through API.
+      parameters:
+        - in: path
+          name: seatId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Seat booking successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+
+  /admin:
+    get:
+      tags:
+        - admin
+      summary: Admin dashboard
+      description: Shows the admin dashboard page.
+      responses:
+        "200":
+          description: The admin dashboard page view
+          content:
+            text/html:
+              schema:
+                type: string
+
+  /admin/create:
+    get:
+      tags:
+        - admin
+      summary: Create movie page (Admin)
+      description: Shows the page for creating a new movie (Admin only).
+      responses:
+        "200":
+          description: The create movie page view
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags:
+        - admin
+      summary: Create a new movie (Admin)
+      description: Creates a new movie (Admin only).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/MovieCreate"
+      responses:
+        "302":
+          description: Redirect to the movies index page
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+
+  /admin/edit/{movieId}:
+    get:
+      tags:
+        - admin
+      summary: Edit movie page (Admin)
+      description: Shows the page for editing an existing movie (Admin only).
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: The edit movie page view
+          content:
+            text/html:
+              schema:
+                type: string
+    put:
+      tags:
+        - admin
+      summary: Update an existing movie (Admin)
+      description: Updates an existing movie (Admin only).
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/MovieUpdate"
+      responses:
+        "302":
+          description: Redirect to the admin dashboard
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+
+  /admin/{movieId}:
+    delete:
+      tags:
+        - admin
+      summary: Delete a movie (Admin)
+      description: Deletes an existing movie (Admin only).
+      parameters:
+        - in: path
+          name: movieId
+          required: true
+          schema:
+            type: integer
+      responses:
+        "302":
+          description: Redirect to the admin dashboard
+          headers:
+            Location:
+              description: URL to redirect to
+              schema:
+                type: string
+
+  /api/admin:
+    get:
+      tags:
+        - admin.api
+      summary: Get all movies (Admin API)
+      description: Retrieves a list of all movies for the admin through API.
+      responses:
+        "200":
+          description: A list of all movies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Movie"
+
+  /cinema:
+    get:
+      tags:
+        - cinema
+      summary: Cinema page
+      description: Shows the cinema page accessible to authenticated users.
+      responses:
+        "200":
+          description: The cinema page view
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  schemas:
+    Movie:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        duration:
+          type: integer
+        rating:
+          type: integer
+        showtime:
+          type: string
+          format: date-time
+        max_rows:
+          type: integer
+        max_seats:
+          type: integer
+        poster:
+          type: string
+
+    Seat:
+      type: object
+      properties:
+        id:
+          type: integer
+        row:
+          type: integer
+        seat:
+          type: integer
+        movie:
+          $ref: "#/components/schemas/Movie"
+
+    MovieCreate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        poster:
+          type: string
+          format: binary
+        rating:
+          type: integer
+        duration:
+          type: integer
+        showtime:
+          type: string
+          format: date-time
+
+    MovieUpdate:
+      allOf:
+        - $ref: "#/components/schemas/MovieCreate"
+        - type: object
+          properties:
+            poster:
+              type: string
+              format: binary
+              nullable: true
+
+    SeatRequest:
+      type: object
+      properties:
+        row:
+          type: integer
+        seat:
+          type: integer
+        movie_id:
+          type: integer
+        user_id:
+          type: integer
+
+    UserRegistration:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+        confirm_password:
+          type: string
+
+    UserLogin:
+      type: object
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+
+    ValidationErrors:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
