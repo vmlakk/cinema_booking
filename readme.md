@@ -3,6 +3,8 @@
 ## 1. Обзор Проекта
 **Название**: "CinemaBooking"
 
+**Инструкция по запуску** - [Инструкция](startup.md)
+
 **Swagger** - [Swagger](swagger.yaml)
 
 **Flow Diagram TXT** - [Flow Diagram TXT](flow_diagram.txt)
