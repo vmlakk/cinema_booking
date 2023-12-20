@@ -1,0 +1,116 @@
+title: Cinema Booking API Interaction with SQL Database
+
+participant User
+participant Admin
+participant API
+participant "SQL Database"
+
+note over User: Regular user interactions
+User->API: GET /login
+API->"SQL Database": Query user data
+"SQL Database"->API: Return user data
+API->User: Login page view
+
+User->API: POST /login
+API->"SQL Database": Validate credentials
+"SQL Database"->API: Credentials validation result
+API->User: User login
+
+User->API: GET /register
+API->User: Registration page view
+
+User->API: POST /register
+API->"SQL Database": Insert new user
+"SQL Database"->API: User registration result
+API->User: User registration
+
+User->API: GET /movies
+API->"SQL Database": Query movies
+"SQL Database"->API: Return movie list
+API->User: List all movies
+
+User->API: GET /movies/{movieId}
+API->"SQL Database": Query specific movie
+"SQL Database"->API: Return movie details
+API->User: Movie details
+
+User->API: POST /movies/{movieId}
+API->"SQL Database": Insert booking
+"SQL Database"->API: Booking result
+API->User: Book seat
+
+User->API: GET /account
+API->"SQL Database": Query user account
+"SQL Database"->API: Return account data
+API->User: User account page
+
+User->API: POST /account
+API->"SQL Database": Update logout status
+"SQL Database"->API: Logout result
+API->User: User logout
+
+User->API: DELETE /account/{seatId}
+API->"SQL Database": Delete booking
+"SQL Database"->API: Delete result
+API->User: Delete booking
+
+User->API: GET /cinema
+API->"SQL Database": Query cinema data
+"SQL Database"->API: Return cinema data
+API->User: Cinema page view
+
+note over API: API specific interactions for users
+User->API: GET /api/movies
+API->"SQL Database": Query movies (API)
+"SQL Database"->API: Return movie list (API)
+API->User: List movies (API)
+
+User->API: GET /api/movies/{movieId}
+API->"SQL Database": Query specific movie (API)
+"SQL Database"->API: Return movie details (API)
+API->User: Movie details (API)
+
+User->API: GET /api/account/seats
+API->"SQL Database": Query user's seats
+"SQL Database"->API: Return seat list
+API->User: List user's seats
+
+User->API: DELETE /api/account/seats/{seatId}
+API->"SQL Database": Delete booking (API)
+"SQL Database"->API: Delete result (API)
+API->User: Delete booking (API)
+
+note over Admin: Admin specific interactions
+Admin->API: GET /admin
+API->"SQL Database": Query admin data
+"SQL Database"->API: Return admin data
+API->Admin: Admin dashboard
+
+Admin->API: GET /admin/create
+API->Admin: Create movie page
+
+Admin->API: POST /admin/create
+API->"SQL Database": Insert new movie
+"SQL Database"->API: Create result
+API->Admin: Create movie
+
+Admin->API: GET /admin/edit/{movieId}
+API->"SQL Database": Query movie for edit
+"SQL Database"->API: Return movie data
+API->Admin: Edit movie page
+
+Admin->API: PUT /admin/edit/{movieId}
+API->"SQL Database": Update movie
+"SQL Database"->API: Update result
+API->Admin: Update movie
+
+Admin->API: DELETE /admin/{movieId}
+API->"SQL Database": Delete movie
+"SQL Database"->API: Delete result
+API->Admin: Delete movie
+
+note over API: API specific interactions for admin
+Admin->API: GET /api/admin
+API->"SQL Database": Query all movies (Admin API)
+"SQL Database"->API: Return movie list (Admin API)
+API->Admin: List all movies (Admin API)
